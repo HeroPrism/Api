@@ -20,7 +20,7 @@ namespace HeroPrism.Api.Tasks
 {
     // Tasks/search
     [ApiRequest("tasks", "search", ActionType.Create, true)]
-    public class SearchTaskRequest : IRequest<SearchResponse>
+    public class SearchTasksRequest : IRequest<SearchResponse>
     {
         public BoundsRequest Bounds { get; set; }
 
@@ -51,18 +51,18 @@ namespace HeroPrism.Api.Tasks
         public CoordinateDto NE { get; set; }
     }
 
-    public class SearchTaskRequestHandler : IRequestHandler<SearchTaskRequest, SearchResponse>
+    public class SearchTasksRequestHandler : IRequestHandler<SearchTasksRequest, SearchResponse>
     {
         private readonly HeroPrismSession _session;
         private readonly SearchSettings _searchSettings;
 
-        public SearchTaskRequestHandler(HeroPrismSession session, SearchSettings searchSettings)
+        public SearchTasksRequestHandler(HeroPrismSession session, SearchSettings searchSettings)
         {
             _session = session;
             _searchSettings = searchSettings;
         }
 
-        public async Task<SearchResponse> Handle(SearchTaskRequest request, CancellationToken cancellationToken)
+        public async Task<SearchResponse> Handle(SearchTasksRequest request, CancellationToken cancellationToken)
         {
             var endpoint = _searchSettings.EndpointName;
             var credential = new SearchCredentials(_searchSettings.ApiKey);
@@ -106,7 +106,7 @@ namespace HeroPrism.Api.Tasks
         }
     }
 
-    public class SearchTaskRequestValidator : AbstractValidator<SearchTaskRequest>
+    public class SearchTaskRequestValidator : AbstractValidator<SearchTasksRequest>
     {
         public SearchTaskRequestValidator()
         {
@@ -142,6 +142,7 @@ namespace HeroPrism.Api.Tasks
         public TaskStatus Status { get; set; }
         
         public TaskCategory Category { get; set; }
+        
     }
 
     public class CoordinateDto
