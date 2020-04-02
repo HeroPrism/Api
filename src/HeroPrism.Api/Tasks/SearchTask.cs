@@ -98,7 +98,8 @@ namespace HeroPrism.Api.Tasks
                 Title = c.Document.Title,
                 ZipCode = c.Document.ZipCode,
                 CreateDateTime = c.Document.CreatedDateTime,
-                Status = c.Document.Status
+                Status = c.Document.Status,
+                Category = c.Document.Category
             });
 
             return response;
@@ -139,6 +140,8 @@ namespace HeroPrism.Api.Tasks
         public CoordinateDto Coordinate { get; set; }
         public DateTime CreateDateTime { get; set; }
         public TaskStatus Status { get; set; }
+        
+        public TaskCategory Category { get; set; }
     }
 
     public class CoordinateDto
