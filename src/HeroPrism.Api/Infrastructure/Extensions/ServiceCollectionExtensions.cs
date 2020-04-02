@@ -55,8 +55,10 @@ namespace HeroPrism.Api.Infrastructure.Extensions
         public static IServiceCollection AddMediatRWithPipelines(this IServiceCollection services)
         {
             services.AddMediatR(typeof(Startup));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RegistrationBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            
             return services;
         }
 

@@ -18,10 +18,13 @@ namespace HeroPrism.Api.Infrastructure
                     SetResponse(context, HttpStatusCode.BadRequest, ex.Errors.Select(c => new ErrorResponse(c.PropertyName, c.ErrorMessage)).ToArray());
                     break;
                 case EntityNotFoundException ex:
-                    SetResponse(context, HttpStatusCode.NotFound, new ErrorResponse("not_found", "Could not find requested data.  Check parameters"));
+                    SetResponse(context, HttpStatusCode.NotFound, new ErrorResponse("not_found", "Could not find requested data.  Check parameters."));
                     break;
                 case UnauthorizedAccessException ex:
-                    SetResponse(context, HttpStatusCode.Unauthorized, new ErrorResponse("unauthorized", "Unauthorized"));
+                    SetResponse(context, HttpStatusCode.Unauthorized, new ErrorResponse("unauthorized", "Unauthorized."));
+                    break;
+                case NoRegistrationException ex:
+                    SetResponse(context, HttpStatusCode.Forbidden, new ErrorResponse("no_registration", "No registration."));
                     break;
                 default:
                     SetResponse(context, HttpStatusCode.InternalServerError, new ErrorResponse("error", context.Exception.ToString()));

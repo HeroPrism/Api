@@ -21,4 +21,8 @@ namespace HeroPrism.Api.Infrastructure
             Route = route;
         }
     }
+
+    public interface IDoNotCheckRegistration
+    {
+    }
 }
