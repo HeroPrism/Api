@@ -98,6 +98,8 @@ namespace HeroPrism.Api
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             
+            app.UseCors(builder => builder.WithOrigins(Configuration.GetValue("CORS", "").Split(",")).AllowAnyMethod().AllowAnyHeader());
+            
             app.UseOpenApi();
             app.UseSwaggerUi3();
         }
