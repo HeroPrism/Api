@@ -16,6 +16,7 @@ namespace HeroPrism.Data
         
         public UserTypes UserType { get; set; }
         
+        public int PictureId { get; set; }
     }
 
     public enum UserTypes

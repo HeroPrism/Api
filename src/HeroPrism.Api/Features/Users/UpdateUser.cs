@@ -14,7 +14,9 @@ namespace HeroPrism.Api.Features.Users
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public UserTypes? UserType { get; set; }
+        public UserTypes UserType { get; set; } = UserTypes.Individual;
+        
+        public int PictureId { get; set; } = 1;
     }
     
     public class UpdateUserRequestHandler : IRequestHandler<UpdateUserRequest, Unit>
@@ -34,7 +36,8 @@ namespace HeroPrism.Api.Features.Users
 
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
-            user.UserType = request.UserType.GetValueOrDefault(UserTypes.Individual);
+            user.UserType = request.UserType;
+            user.PictureId = request.PictureId;
 
             await _userStore.UpsertAsync(user, cancellationToken: cancellationToken);
             
