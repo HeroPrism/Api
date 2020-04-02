@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroPrism.Api", "HeroPrism.Api\HeroPrism.Api.csproj", "{F61FBEEB-6E5B-41D5-A8F6-C7EB326F660F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroPrism.Data", "HeroPrism.Data\HeroPrism.Data.csproj", "{5C1118D7-D703-4B07-884F-EA4A80A4817E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F61FBEEB-6E5B-41D5-A8F6-C7EB326F660F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F61FBEEB-6E5B-41D5-A8F6-C7EB326F660F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F61FBEEB-6E5B-41D5-A8F6-C7EB326F660F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F61FBEEB-6E5B-41D5-A8F6-C7EB326F660F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C1118D7-D703-4B07-884F-EA4A80A4817E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C1118D7-D703-4B07-884F-EA4A80A4817E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C1118D7-D703-4B07-884F-EA4A80A4817E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C1118D7-D703-4B07-884F-EA4A80A4817E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
