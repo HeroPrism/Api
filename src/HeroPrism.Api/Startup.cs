@@ -1,3 +1,4 @@
+using System;
 using System.Security.Claims;
 using System.Threading;
 using CorrelationId;
@@ -26,12 +27,14 @@ namespace HeroPrism.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -46,6 +49,12 @@ namespace HeroPrism.Api
             services.AddAuth0(Configuration.GetSection("Auth0"));
 
             services.AddControllerless<ApiRequest>();
+            
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.InstrumentationKey = Configuration.GetValue<string>("ApplicationInsights:InstructionKey");
+                options.DeveloperMode = Environment.IsDevelopment();
+            });
             
             services.AddMvcCore(options =>
             {
