@@ -55,6 +55,8 @@ namespace HeroPrism.Api
                 options.InstrumentationKey = Configuration.GetValue<string>("ApplicationInsights:InstructionKey");
                 options.DeveloperMode = Environment.IsDevelopment();
             });
+
+            services.AddSwaggerDocument();
             
             services.AddMvcCore(options =>
             {
@@ -95,6 +97,9 @@ namespace HeroPrism.Api
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
         }
     }
 }
