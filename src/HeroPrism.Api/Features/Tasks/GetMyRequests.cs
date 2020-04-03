@@ -12,7 +12,7 @@ using Nerdino.Controllerless;
 
 namespace HeroPrism.Api.Features.Tasks
 {
-    [ApiRequest("tasks", "requests", ActionType.Read, true)]
+    [ApiRequest("tasks", "requests", ActionType.Read, false)]
     public class GetMyRequestsRequest : IRequest<GetMyRequestsResponse>
     {
     }

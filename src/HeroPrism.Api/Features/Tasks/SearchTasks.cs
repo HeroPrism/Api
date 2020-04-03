@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
+using Cosmonaut.Extensions;
 using FluentValidation;
 using HeroPrism.Api.Infrastructure;
 using HeroPrism.Api.Infrastructure.Settings;
@@ -87,9 +88,14 @@ namespace HeroPrism.Api.Features.Tasks
                 return response;
             }
 
-            var userLookup = new Dictionary<string, User>();
+            var userIds = searchResponse.Results.Select(c => c.Document.UserId).Distinct();
 
+            var users = await _userStore.Query().Where(c => userIds.Contains(c.Id)).ToListAsync(cancellationToken);
+
+            var userLookup = users.ToDictionary(c => c.Id);
+            
             var responseTasks = new List<TaskResponse>();
+                
             foreach (var searchResult in searchResponse.Results)
             {
                 var taskResponse = CreateTaskResponse(searchResult.Document);
