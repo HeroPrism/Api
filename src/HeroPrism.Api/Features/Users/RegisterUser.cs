@@ -31,7 +31,7 @@ namespace HeroPrism.Api.Features.Users
 
         public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            var user = _session.User ?? new User() {Id = _session.UserId};
+            var user = _session.User ?? new User() {AuthId = _session.AuthId};
 
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
