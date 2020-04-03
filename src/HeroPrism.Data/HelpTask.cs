@@ -17,14 +17,14 @@ namespace HeroPrism.Data
         
         public string UserId { get; set; }
         
-        public TaskStatus Status { get; set; }
+        public TaskStatuses Status { get; set; }
         
         public TaskCategory Category { get; set; }
         
         public string CosmosEntityName { get; set; }
     }
     
-    public enum TaskStatus
+    public enum TaskStatuses
     {
         New,
         Open,

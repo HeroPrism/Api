@@ -15,7 +15,6 @@ namespace HeroPrism.Api.Features.Users
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public UserTypes UserType { get; set; } = UserTypes.Individual;
-        
         public int PictureId { get; set; } = 1;
     }
     
