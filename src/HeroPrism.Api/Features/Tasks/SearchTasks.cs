@@ -108,6 +108,11 @@ namespace HeroPrism.Api.Features.Tasks
 
                 var user = userLookup[searchResult.Document.UserId];
 
+                if (user == null)
+                {
+                    continue;
+                }
+
                 taskResponse.Requester = new PublicUserResponse()
                 {
                     FirstName = user.FirstName,
