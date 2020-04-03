@@ -5,18 +5,18 @@ namespace HeroPrism.Api.Infrastructure.Enrichers
 {
     public class UserIdEnricher : BaseIdEnricher
     {
-        private readonly HeroPrismSession _session;
+        private readonly IAuthIdAccessor _authIdAccessor;
 
-        public UserIdEnricher(HeroPrismSession session)
+        public UserIdEnricher(IAuthIdAccessor authIdAccessor)
         {
-            _session = session;
+            _authIdAccessor = authIdAccessor;
         }
 
         protected override string IdName => "UserId";
 
         protected override string GetId()
         {
-            return _session.UserId;
+            return _authIdAccessor.GetAuthId(CancellationToken.None).Result;
         }
     }
 }

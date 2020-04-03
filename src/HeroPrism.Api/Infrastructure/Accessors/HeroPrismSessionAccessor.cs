@@ -18,9 +18,9 @@ namespace HeroPrism.Api.Infrastructure.Accessors
         public async Task<HeroPrismSession> Get(CancellationToken cancellationToken)
         {
             var correlationId = _correlationAccessor.CorrelationContext.CorrelationId;
-            var userId = await _authIdAccessor.GetAuthId(cancellationToken);
+            var authId = await _authIdAccessor.GetAuthId(cancellationToken);
 
-            return new HeroPrismSession(correlationId, userId);
+            return new HeroPrismSession(correlationId, authId);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace HeroPrism.Api.Infrastructure.Accessors
             if (!user.Identity.IsAuthenticated)
             {
 #if DEBUG
-                return "craig";
+                return "auth0|5e86867df23bc20bf0c5b5fb";
 #else
                     return null;
 #endif

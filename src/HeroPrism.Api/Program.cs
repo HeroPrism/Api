@@ -61,7 +61,7 @@ namespace HeroPrism.Api
         {
             return new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .Enrich.WithUserId(webHost.Services.GetRequiredService<HeroPrismSession>())
+                .Enrich.WithAuthId(webHost.Services.GetRequiredService<IAuthIdAccessor>())
                 .Enrich.WithCorrelationId(webHost.Services.GetRequiredService<ICorrelationContextAccessor>())
                 .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm:ss} [{Level}] ({UserId}) ({CorrelationId}) [{SourceContext}] {Message}{NewLine}{Exception}")
                 .WriteTo.ApplicationInsights(TelemetryConverter.Events)
