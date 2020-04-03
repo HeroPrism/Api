@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.Azure.Documents.Spatial;
 using Nerdino.Controllerless;
 
-namespace HeroPrism.Api.Tasks
+namespace HeroPrism.Api.Features.Tasks
 {
     // POST - /tasks
     [ApiRequest("tasks", "", ActionType.Create, false)]

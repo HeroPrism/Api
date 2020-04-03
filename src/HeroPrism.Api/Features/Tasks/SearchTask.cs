@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +9,12 @@ using HeroPrism.Api.Infrastructure;
 using HeroPrism.Api.Infrastructure.Settings;
 using HeroPrism.Data;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using Nerdino.Controllerless;
 using TaskStatus = HeroPrism.Data.TaskStatus;
 
-namespace HeroPrism.Api.Tasks
+namespace HeroPrism.Api.Features.Tasks
 {
     // Tasks/search
     [ApiRequest("tasks", "search", ActionType.Create, true)]

@@ -51,7 +51,6 @@ namespace HeroPrism.Api.Features.Users
         {
             RuleFor(c => c.FirstName).NotEmpty();
             RuleFor(c => c.LastName).NotEmpty();
-            RuleFor(c => c.UserType).NotEmpty();
         }
     }
 }
