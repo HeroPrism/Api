@@ -6,24 +6,19 @@ namespace HeroPrism.Api.Infrastructure.Accessors
 {
     public class HeroPrismSessionAccessor : IHeroPrismSessionAccessor
     {
-        private readonly IUserIdAccessor _userIdAccessor;
+        private readonly IAuthIdAccessor _authIdAccessor;
         private readonly ICorrelationContextAccessor _correlationAccessor;
 
-        public HeroPrismSessionAccessor(IUserIdAccessor userIdAccessor, ICorrelationContextAccessor correlationAccessor)
+        public HeroPrismSessionAccessor(IAuthIdAccessor authIdAccessor, ICorrelationContextAccessor correlationAccessor)
         {
-            _userIdAccessor = userIdAccessor;
+            _authIdAccessor = authIdAccessor;
             _correlationAccessor = correlationAccessor;
         }
 
         public async Task<HeroPrismSession> Get(CancellationToken cancellationToken)
         {
             var correlationId = _correlationAccessor.CorrelationContext.CorrelationId;
-            var userId = await _userIdAccessor.GetUserId(cancellationToken);
-
-            if (userId == null)
-            {
-                // TODO : FIGURE OUT WHAT TO DO HERE.  THIS SHOULDN'T HAPPEN
-            }
+            var userId = await _authIdAccessor.GetAuthId(cancellationToken);
 
             return new HeroPrismSession(correlationId, userId);
         }

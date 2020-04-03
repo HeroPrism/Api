@@ -5,14 +5,17 @@ namespace HeroPrism.Api.Infrastructure
     public class HeroPrismSession
     {
         public string CorrelationId { get; }
-        public string UserId { get; }
+        
+        public string AuthId { get; }
+        
+        public string UserId { get; set; }
         
         public User User { get; set; }
 
-        public HeroPrismSession(string correlationId, string userId)
+        public HeroPrismSession(string correlationId, string authId)
         {
             CorrelationId = correlationId;
-            UserId = userId;
+            AuthId = authId;
         }
     }
 }

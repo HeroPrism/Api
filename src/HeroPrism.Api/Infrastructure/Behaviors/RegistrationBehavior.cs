@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
+using Cosmonaut.Extensions;
 using HeroPrism.Api.Infrastructure.Exceptions;
 using HeroPrism.Data;
 using MediatR;
@@ -24,18 +25,20 @@ namespace HeroPrism.Api.Infrastructure.Behaviors
         {
             // Prior to this point the auth should have been checked if needed.  
             // Don't want to check registration on the registration API
-            if (request is IDoNotCheckRegistration || string.IsNullOrWhiteSpace(_session.UserId))
+            if (request is IDoNotCheckRegistration || string.IsNullOrWhiteSpace(_session.AuthId))
             {
                 return await next();
             }
 
-            var user = await _userStore.FindAsync(_session.UserId, cancellationToken: cancellationToken);
+            var user = await _userStore.Query()
+                .FirstOrDefaultAsync(c => c.AuthId == _session.AuthId, cancellationToken);
 
             if (user == null)
             {
                 throw new NoRegistrationException();
             }
 
+            _session.UserId = user.Id;
             _session.User = user;
 
             return await next();

@@ -8,12 +8,12 @@ namespace HeroPrism.Api.Infrastructure.Enrichers
 {
     public static class LoggingExtensions
     {
-        public static LoggerConfiguration WithUserId(this LoggerEnrichmentConfiguration enrichmentConfiguration, IUserIdAccessor userIdAccessor)
+        public static LoggerConfiguration WithUserId(this LoggerEnrichmentConfiguration enrichmentConfiguration, HeroPrismSession session)
         {
             if (enrichmentConfiguration == null) 
                 throw new ArgumentNullException(nameof(enrichmentConfiguration));
 
-            var userIdEnricher = new UserIdEnricher(userIdAccessor);
+            var userIdEnricher = new UserIdEnricher(session);
 
             return enrichmentConfiguration.With(userIdEnricher);
         }

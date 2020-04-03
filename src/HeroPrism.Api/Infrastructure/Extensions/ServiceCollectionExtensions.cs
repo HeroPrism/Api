@@ -84,7 +84,7 @@ namespace HeroPrism.Api.Infrastructure.Extensions
         public static IServiceCollection AddHeroPrismSession(this IServiceCollection services)
         {
             services.AddCorrelationId();
-            services.AddTransient<IUserIdAccessor, UserIdAccessor>();
+            services.AddTransient<IAuthIdAccessor, AuthIdAccessor>();
             services.AddTransient<IHeroPrismSessionAccessor, HeroPrismSessionAccessor>();
             services.AddScoped(context => context.GetService<IHeroPrismSessionAccessor>().Get(CancellationToken.None).Result);
 

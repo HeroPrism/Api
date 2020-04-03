@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace HeroPrism.Api.Infrastructure.Accessors
 {
-    public interface IUserIdAccessor
+    public interface IAuthIdAccessor
     {
-        Task<string> GetUserId(CancellationToken cancellationToken);
+        Task<string> GetAuthId(CancellationToken cancellationToken);
     }
 }

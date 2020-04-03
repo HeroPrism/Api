@@ -5,16 +5,16 @@ using Microsoft.AspNetCore.Http;
 
 namespace HeroPrism.Api.Infrastructure.Accessors
 {
-    public class UserIdAccessor : IUserIdAccessor
+    public class AuthIdAccessor : IAuthIdAccessor
     {
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public UserIdAccessor(IHttpContextAccessor contextAccessor)
+        public AuthIdAccessor(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<string> GetUserId(CancellationToken cancellationToken)
+        public async Task<string> GetAuthId(CancellationToken cancellationToken)
         {
             // HACK: GET AROUND ASYNC COMPLAINT
             await Task.CompletedTask;
