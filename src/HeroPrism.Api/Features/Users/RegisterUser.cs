@@ -24,11 +24,13 @@ namespace HeroPrism.Api.Features.Users
     {
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
+        private readonly IClient _client;
 
-        public RegisterUserRequestHandler(ICosmosStore<User> userStore, HeroPrismSession session)
+        public RegisterUserRequestHandler(ICosmosStore<User> userStore, HeroPrismSession session, IClient client)
         {
             _userStore = userStore;
             _session = session;
+            _client = client;
         }
 
         public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
@@ -50,14 +52,13 @@ namespace HeroPrism.Api.Features.Users
 
         private async Task CreateChatUser(string userId, CancellationToken cancellationToken)
         {
-            var client = new StreamChat.Client(null, null);
             var user = new StreamChat.User
             {
                 ID = userId,
                 Role = Role.User
             };
 
-            await client.Users.Update(user);
+            await _client.Users.Update(user);
         }
     }
 

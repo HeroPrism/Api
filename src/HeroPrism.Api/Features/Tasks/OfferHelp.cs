@@ -52,6 +52,13 @@ namespace HeroPrism.Api.Features.Tasks
                     throw new EntityNotFoundException();
                 }
 
+                if (task.UserId == _session.UserId)
+                {
+                    // You can't offer to help your own task.
+                    // TODO: Come up with different way to do this?
+                    throw new EntityNotFoundException();
+                }
+
                 offered = new HelpOffered()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -72,7 +79,7 @@ namespace HeroPrism.Api.Features.Tasks
             CancellationToken cancellationToken)
         {
             var channel = _chatClient.Channel("messaging", id);
-            
+
             await channel.Create(id);
             await channel.AddMembers(new[] {requesterId, helperId});
         }

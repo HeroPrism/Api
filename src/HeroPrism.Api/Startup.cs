@@ -48,7 +48,7 @@ namespace HeroPrism.Api
 
             services.AddAuth0(Configuration.GetSection("Auth0"));
 
-            services.AddChat(Configuration.GetSection(""));
+            services.AddChat(Configuration.GetSection("Chat"));
 
             services.AddControllerless<ApiRequest>();
             
