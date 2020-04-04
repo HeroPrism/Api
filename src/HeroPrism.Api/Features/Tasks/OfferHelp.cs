@@ -8,11 +8,12 @@ using HeroPrism.Api.Infrastructure;
 using HeroPrism.Api.Infrastructure.Exceptions;
 using HeroPrism.Data;
 using MediatR;
-using Microsoft.Azure.Documents.Linq;
+using Nerdino.Controllerless;
 using StreamChat;
 
 namespace HeroPrism.Api.Features.Tasks
 {
+    [ApiRequest("tasks", "help", ActionType.Create, false)]
     public class OfferHelpRequest : IRequest<OfferHelpResponse>
     {
         public string TaskId { get; set; }
