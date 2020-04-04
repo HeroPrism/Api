@@ -6,6 +6,8 @@ using HeroPrism.Api.Infrastructure;
 using HeroPrism.Data;
 using MediatR;
 using Nerdino.Controllerless;
+using StreamChat;
+using User = HeroPrism.Data.User;
 
 namespace HeroPrism.Api.Features.Users
 {
@@ -18,7 +20,7 @@ namespace HeroPrism.Api.Features.Users
         public int PictureId { get; set; } = 1;
     }
 
-    public class RegisterUserRequestHandler : IRequestHandler<RegisterUserRequest, Unit>
+    public class RegisterUserRequestHandler : IRequestHandler<RegisterUserRequest>
     {
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
@@ -40,8 +42,22 @@ namespace HeroPrism.Api.Features.Users
             user.PictureId = request.PictureId; 
 
             await _userStore.UpsertAsync(user, cancellationToken: cancellationToken);
+         
+            await CreateChatUser(user.Id, cancellationToken);
 
             return Unit.Value;
+        }
+
+        private async Task CreateChatUser(string userId, CancellationToken cancellationToken)
+        {
+            var client = new StreamChat.Client(null, null);
+            var user = new StreamChat.User
+            {
+                ID = userId,
+                Role = Role.User
+            };
+
+            await client.Users.Update(user);
         }
     }
 
