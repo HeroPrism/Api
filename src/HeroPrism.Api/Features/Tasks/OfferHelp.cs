@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
+using FluentValidation;
 using HeroPrism.Api.Infrastructure;
 using HeroPrism.Api.Infrastructure.Exceptions;
 using HeroPrism.Data;
@@ -70,6 +71,10 @@ namespace HeroPrism.Api.Features.Tasks
                 await CreateChatRoom(offered.Id, offered.RequesterId, offered.HelperId, cancellationToken);
 
                 await _helpStore.AddAsync(offered, cancellationToken: cancellationToken);
+
+                task.Status = TaskStatuses.Active;
+                
+                await _taskStore.UpsertAsync(task, cancellationToken: cancellationToken);
             }
 
             return new OfferHelpResponse() {ChatId = offered.Id};
@@ -80,8 +85,15 @@ namespace HeroPrism.Api.Features.Tasks
         {
             var channel = _chatClient.Channel("messaging", id);
 
-            await channel.Create(id);
-            await channel.AddMembers(new[] {requesterId, helperId});
+            await channel.Create(requesterId,new[] {requesterId, helperId});
+        }
+    }
+
+    public class OfferHelpRequestValidator : AbstractValidator<OfferHelpRequest>
+    {
+        public OfferHelpRequestValidator()
+        {
+            RuleFor(c => c.TaskId).NotEmpty();
         }
     }
 

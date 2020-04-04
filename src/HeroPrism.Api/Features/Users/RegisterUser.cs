@@ -24,13 +24,13 @@ namespace HeroPrism.Api.Features.Users
     {
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
-        private readonly IClient _client;
+        private readonly IClient _chatClient;
 
-        public RegisterUserRequestHandler(ICosmosStore<User> userStore, HeroPrismSession session, IClient client)
+        public RegisterUserRequestHandler(ICosmosStore<User> userStore, HeroPrismSession session, IClient chatClient)
         {
             _userStore = userStore;
             _session = session;
-            _client = client;
+            _chatClient = chatClient;
         }
 
         public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ namespace HeroPrism.Api.Features.Users
                 Role = Role.User
             };
 
-            await _client.Users.Update(user);
+            await _chatClient.Users.Update(user);
         }
     }
 
