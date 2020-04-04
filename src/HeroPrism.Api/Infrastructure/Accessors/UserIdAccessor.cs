@@ -24,13 +24,20 @@ namespace HeroPrism.Api.Infrastructure.Accessors
             if (!user.Identity.IsAuthenticated)
             {
 #if DEBUG
-                return "craig";
+                return "auth0_craig";
 #else
                     return null;
 #endif
             }
 
-            return user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return userId;
+            }
+
+            return userId.Replace("|", "_");
         }
     }
 }

@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using StreamChat;
+using User = HeroPrism.Data.User;
 
 namespace HeroPrism.Api.Infrastructure.Extensions
 {
@@ -38,6 +40,7 @@ namespace HeroPrism.Api.Infrastructure.Extensions
 
             services.AddCosmosStore<HelpTask>(cosmosSettings);
             services.AddCosmosStore<User>(cosmosSettings);
+            services.AddCosmosStore<HelpOffered>(cosmosSettings);
 
             return services;
         }
@@ -87,6 +90,15 @@ namespace HeroPrism.Api.Infrastructure.Extensions
             services.AddTransient<IUserIdAccessor, UserIdAccessor>();
             services.AddTransient<IHeroPrismSessionAccessor, HeroPrismSessionAccessor>();
             services.AddScoped(context => context.GetService<IHeroPrismSessionAccessor>().Get(CancellationToken.None).Result);
+
+            return services;
+        }
+
+        public static IServiceCollection AddChat(this IServiceCollection services, IConfigurationSection section)
+        {
+            var key = section.GetValue<string>("ApiKey");
+            var secret = section.GetValue<string>("ApiSecret");
+            services.AddSingleton<IClient>(new Client(key, secret));
 
             return services;
         }

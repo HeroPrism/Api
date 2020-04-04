@@ -6,6 +6,8 @@ using HeroPrism.Api.Infrastructure;
 using HeroPrism.Data;
 using MediatR;
 using Nerdino.Controllerless;
+using StreamChat;
+using User = HeroPrism.Data.User;
 
 namespace HeroPrism.Api.Features.Users
 {
@@ -18,15 +20,17 @@ namespace HeroPrism.Api.Features.Users
         public int PictureId { get; set; } = 1;
     }
 
-    public class RegisterUserRequestHandler : IRequestHandler<RegisterUserRequest, Unit>
+    public class RegisterUserRequestHandler : IRequestHandler<RegisterUserRequest>
     {
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
+        private readonly IClient _chatClient;
 
-        public RegisterUserRequestHandler(ICosmosStore<User> userStore, HeroPrismSession session)
+        public RegisterUserRequestHandler(ICosmosStore<User> userStore, HeroPrismSession session, IClient chatClient)
         {
             _userStore = userStore;
             _session = session;
+            _chatClient = chatClient;
         }
 
         public async Task<Unit> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
@@ -40,8 +44,21 @@ namespace HeroPrism.Api.Features.Users
             user.PictureId = request.PictureId; 
 
             await _userStore.UpsertAsync(user, cancellationToken: cancellationToken);
+         
+            await CreateChatUser(user.Id, cancellationToken);
 
             return Unit.Value;
+        }
+
+        private async Task CreateChatUser(string userId, CancellationToken cancellationToken)
+        {
+            var user = new StreamChat.User
+            {
+                ID = userId,
+                Role = Role.User
+            };
+
+            await _chatClient.Users.Update(user);
         }
     }
 
