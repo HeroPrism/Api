@@ -78,7 +78,7 @@ namespace HeroPrism.Api.Features.Chat
 
             var task = await _taskStore.FindAsync(offer.TaskId, cancellationToken: cancellationToken);
 
-            if (task == null || task.Status == TaskStatuses.Deleted)
+            if (task == null || !task.IsOpen())
             {
                 throw new EntityNotFoundException();
             }

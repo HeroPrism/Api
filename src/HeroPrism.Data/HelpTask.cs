@@ -22,6 +22,11 @@ namespace HeroPrism.Data
         public TaskCategory Category { get; set; }
         
         public string CosmosEntityName { get; set; }
+
+        public bool IsOpen()
+        {
+            return Status == TaskStatuses.Active || Status == TaskStatuses.New;
+        }
     }
     
     public enum TaskStatuses

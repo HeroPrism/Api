@@ -62,7 +62,7 @@ namespace HeroPrism.Api.Features.Tasks
             {
                 var task = await _taskStore.FindAsync(request.TaskId, cancellationToken: cancellationToken);
 
-                if (task == null || task.Status == TaskStatuses.Completed || task.Status == TaskStatuses.Deleted)
+                if (task == null || !task.IsOpen())
                 {
                     throw new EntityNotFoundException();
                 }

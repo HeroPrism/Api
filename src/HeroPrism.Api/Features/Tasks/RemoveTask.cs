@@ -53,6 +53,11 @@ namespace HeroPrism.Api.Features.Tasks
                 throw new UnauthorizedAccessException();
             }
 
+            if (task.Status == TaskStatuses.Deleted)
+            {
+                return Unit.Value;
+            }
+
             await RemoveChatRooms(task.Id, cancellationToken);
 
             task.Status = TaskStatuses.Deleted;

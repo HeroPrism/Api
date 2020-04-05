@@ -45,7 +45,7 @@ namespace HeroPrism.Api.Features.Tasks
         {
             var task = await _taskStore.FindAsync(request.TaskId, cancellationToken: cancellationToken);
 
-            if (task == null)
+            if (task == null || !task.IsOpen())
             {
                 throw new EntityNotFoundException();
             }
@@ -77,13 +77,13 @@ namespace HeroPrism.Api.Features.Tasks
 
                 // Mark as completed
                 await MarkTaskAsCompleted(task, cancellationToken);
-                
+
                 // Remove all chat rooms associated to task
                 await RemoveChatRooms(task.Id, cancellationToken);
             }
 
             await _offerStore.UpdateAsync(offer, cancellationToken: cancellationToken);
-            
+
             return Unit.Value;
         }
 
