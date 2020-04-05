@@ -133,7 +133,7 @@ namespace HeroPrism.Api.Features.Tasks
 
             var parameters = new SearchParameters
             {
-                Filter = $"Status ne '{TaskStatuses.Completed}' and " + request.ToSearchString(),
+                Filter = $"Status ne '{TaskStatuses.Completed}' and Status ne '{TaskStatuses.Deleted}' and " + request.ToSearchString(),
             };
 
             searchClient.UseHttpGetForQueries = true;

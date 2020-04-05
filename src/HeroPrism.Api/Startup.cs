@@ -41,6 +41,14 @@ namespace HeroPrism.Api
         {
 
             services.AddMediatRWithPipelines();
+
+            services.AddHttpClient("AzureMaps", (serviceProvider, client) =>
+            {
+                var settings = serviceProvider.GetService<AzureMapSettings>();
+
+                client.BaseAddress = new Uri(settings.BaseUrl);
+            });
+            services.AddAzureMap(Configuration.GetSection("AzureMaps"));
             services.AddCosmosDb(Configuration.GetSection("CosmosDb"));
             services.AddSearch(Configuration.GetSection("Search"));
 

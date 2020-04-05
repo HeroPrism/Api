@@ -5,7 +5,7 @@ using Cosmonaut.Attributes;
 namespace HeroPrism.Data
 {
     [SharedCosmosCollection("shared")]
-    public class HelpOffered : BaseEntity, ISharedCosmosEntity
+    public class Offer : BaseEntity, ISharedCosmosEntity
     {
         public string CosmosEntityName { get; set; }
         

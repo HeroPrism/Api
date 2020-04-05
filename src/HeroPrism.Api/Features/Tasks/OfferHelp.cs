@@ -35,15 +35,15 @@ namespace HeroPrism.Api.Features.Tasks
 
     public class OfferHelpRequestHandler : IRequestHandler<OfferHelpRequest, OfferHelpResponse>
     {
-        private readonly ICosmosStore<HelpOffered> _helpStore;
+        private readonly ICosmosStore<Offer> _offerStore;
         private readonly ICosmosStore<HelpTask> _taskStore;
         private readonly HeroPrismSession _session;
         private readonly IClient _chatClient;
 
-        public OfferHelpRequestHandler(ICosmosStore<HelpOffered> helpStore, ICosmosStore<HelpTask> taskStore,
+        public OfferHelpRequestHandler(ICosmosStore<Offer> offerStore, ICosmosStore<HelpTask> taskStore,
             HeroPrismSession session, IClient chatClient)
         {
-            _helpStore = helpStore;
+            _offerStore = offerStore;
             _taskStore = taskStore;
             _session = session;
             _chatClient = chatClient;
@@ -52,12 +52,12 @@ namespace HeroPrism.Api.Features.Tasks
         public async Task<OfferHelpResponse> Handle(OfferHelpRequest request, CancellationToken cancellationToken)
         {
             // Check to make sure they aren't already helping
-            var offered = await _helpStore.Query()
+            var offer = await _offerStore.Query()
                 .Where(c => c.HelperId == _session.UserId)
                 .Where(c => c.TaskId == request.TaskId)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (offered == null)
+            if (offer == null)
             {
                 var task = await _taskStore.FindAsync(request.TaskId, cancellationToken: cancellationToken);
 
@@ -69,11 +69,10 @@ namespace HeroPrism.Api.Features.Tasks
                 if (task.UserId == _session.UserId)
                 {
                     // You can't offer to help your own task.
-                    // TODO: Come up with different way to do this?
-                    throw new EntityNotFoundException();
+                    throw new UnauthorizedAccessException();
                 }
 
-                offered = new HelpOffered()
+                offer = new Offer()
                 {
                     Id = Guid.NewGuid().ToString(),
                     RequesterId = task.UserId,
@@ -81,16 +80,16 @@ namespace HeroPrism.Api.Features.Tasks
                     TaskId = task.Id,
                 };
 
-                await CreateChatRoom(offered.Id, offered.RequesterId, offered.HelperId, cancellationToken);
+                await CreateChatRoom(offer.Id, offer.RequesterId, offer.HelperId, cancellationToken);
 
-                await _helpStore.AddAsync(offered, cancellationToken: cancellationToken);
+                await _offerStore.AddAsync(offer, cancellationToken: cancellationToken);
 
                 task.Status = TaskStatuses.Active;
                 
                 await _taskStore.UpsertAsync(task, cancellationToken: cancellationToken);
             }
 
-            return new OfferHelpResponse() {ChatId = offered.Id};
+            return new OfferHelpResponse() {ChatId = offer.Id};
         }
 
         private async Task CreateChatRoom(string id, string requesterId, string helperId,

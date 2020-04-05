@@ -30,11 +30,11 @@ namespace HeroPrism.Api.Features.Tasks
     public class RemoveTaskRequestHandler : IRequestHandler<RemoveTaskRequest>
     {
         private readonly ICosmosStore<HelpTask> _taskStore;
-        private readonly ICosmosStore<HelpOffered> _offeredStore;
+        private readonly ICosmosStore<Offer> _offeredStore;
         private readonly HeroPrismSession _session;
         private readonly IClient _chatClient;
 
-        public RemoveTaskRequestHandler(ICosmosStore<HelpTask> taskStore, ICosmosStore<HelpOffered> offeredStore, HeroPrismSession session, IClient chatClient)
+        public RemoveTaskRequestHandler(ICosmosStore<HelpTask> taskStore, ICosmosStore<Offer> offeredStore, HeroPrismSession session, IClient chatClient)
         {
             _taskStore = taskStore;
             _offeredStore = offeredStore;
@@ -52,9 +52,9 @@ namespace HeroPrism.Api.Features.Tasks
             }
 
             //await RemoveChatRooms(task.Id);
+            task.Status = TaskStatuses.Deleted;
 
-            // TODO: Maybe we want to soft delete?
-            await _taskStore.RemoveAsync(task, cancellationToken: cancellationToken);
+            await _taskStore.UpdateAsync(task, cancellationToken: cancellationToken);
 
             return Unit.Value;
         }

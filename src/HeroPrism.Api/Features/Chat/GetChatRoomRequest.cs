@@ -45,12 +45,12 @@ namespace HeroPrism.Api.Features.Chat
 
     public class GetChatRoomRequestHandler : IRequestHandler<GetChatRoomRequest, GetChatRoomRequestResponse>
     {
-        private readonly ICosmosStore<HelpOffered> _offerStore;
+        private readonly ICosmosStore<Offer> _offerStore;
         private readonly ICosmosStore<User> _userStore;
         private readonly ICosmosStore<HelpTask> _taskStore;
         private readonly HeroPrismSession _session;
 
-        public GetChatRoomRequestHandler(ICosmosStore<HelpOffered> offerStore, 
+        public GetChatRoomRequestHandler(ICosmosStore<Offer> offerStore, 
             ICosmosStore<User> userStore,
             ICosmosStore<HelpTask> taskStore,
             HeroPrismSession session)

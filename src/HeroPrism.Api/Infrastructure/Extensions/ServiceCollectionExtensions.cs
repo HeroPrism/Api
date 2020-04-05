@@ -4,6 +4,7 @@ using System.Threading;
 using CorrelationId;
 using Cosmonaut;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
+using HeroPrism.Api.Features.Tasks;
 using HeroPrism.Api.Infrastructure.Accessors;
 using HeroPrism.Api.Infrastructure.Behaviors;
 using HeroPrism.Api.Infrastructure.Settings;
@@ -40,7 +41,16 @@ namespace HeroPrism.Api.Infrastructure.Extensions
 
             services.AddCosmosStore<HelpTask>(cosmosSettings);
             services.AddCosmosStore<User>(cosmosSettings);
-            services.AddCosmosStore<HelpOffered>(cosmosSettings);
+            services.AddCosmosStore<Offer>(cosmosSettings);
+
+            return services;
+        }
+
+        public static IServiceCollection AddAzureMap(this IServiceCollection services, IConfigurationSection section)
+        {
+            var mapSettings = new AzureMapSettings();
+            section.Bind(mapSettings);
+            services.AddSingleton(mapSettings);
 
             return services;
         }

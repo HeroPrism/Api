@@ -28,7 +28,8 @@ namespace HeroPrism.Data
     {
         New,
         Active,
-        Completed
+        Completed,
+        Deleted
     }
     
     public enum TaskCategory

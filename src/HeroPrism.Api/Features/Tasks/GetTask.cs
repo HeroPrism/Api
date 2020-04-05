@@ -33,11 +33,11 @@ namespace HeroPrism.Api.Features.Tasks
     public class GetTaskRequestHandler : IRequestHandler<GetTaskRequest, GetTaskRequestResponse>
     {
         private readonly ICosmosStore<HelpTask> _taskStore;
-        private readonly ICosmosStore<HelpOffered> _offerStore;
+        private readonly ICosmosStore<Offer> _offerStore;
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
 
-        public GetTaskRequestHandler(ICosmosStore<HelpTask> taskStore, ICosmosStore<HelpOffered> offerStore,
+        public GetTaskRequestHandler(ICosmosStore<HelpTask> taskStore, ICosmosStore<Offer> offerStore,
             ICosmosStore<User> userStore, HeroPrismSession session)
         {
             _taskStore = taskStore;

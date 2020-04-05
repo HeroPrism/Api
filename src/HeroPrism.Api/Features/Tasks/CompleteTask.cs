@@ -22,17 +22,17 @@ namespace HeroPrism.Api.Features.Tasks
     public class CompleteTaskRequestHandler : IRequestHandler<CompleteTaskRequest>
     {
         private readonly ICosmosStore<HelpTask> _taskStore;
-        private readonly ICosmosStore<HelpOffered> _offeredStore;
+        private readonly ICosmosStore<Offer> _offerStore;
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
 
         public CompleteTaskRequestHandler(ICosmosStore<HelpTask> taskStore,
-            ICosmosStore<HelpOffered> offeredStore,
+            ICosmosStore<Offer> offerStore,
             ICosmosStore<User> userStore,
             HeroPrismSession session)
         {
             _taskStore = taskStore;
-            _offeredStore = offeredStore;
+            _offerStore = offerStore;
             _userStore = userStore;
             _session = session;
         }
@@ -46,30 +46,30 @@ namespace HeroPrism.Api.Features.Tasks
                 throw new EntityNotFoundException();
             }
 
-            var offeredHelp = await _offeredStore.Query()
+            var offer = await _offerStore.Query()
                 .Where(c => c.HelperId == _session.UserId || c.RequesterId == _session.UserId)
                 .FirstOrDefaultAsync(c => c.TaskId == request.TaskId, cancellationToken);
 
-            if (offeredHelp == null)
+            if (offer == null)
             {
                 // Trying to complete something they don't have access to. 
                 throw new UnauthorizedAccessException();
             }
 
-            if (offeredHelp.HelperId == _session.UserId)
+            if (offer.HelperId == _session.UserId)
             {
-                offeredHelp.HelperCompleted = true;
+                offer.HelperCompleted = true;
             }
 
-            if (offeredHelp.RequesterId == _session.UserId)
+            if (offer.RequesterId == _session.UserId)
             {
-                offeredHelp.RequesterCompleted = true;
+                offer.RequesterCompleted = true;
             }
 
-            if (offeredHelp.HelperCompleted && offeredHelp.RequesterCompleted)
+            if (offer.HelperCompleted && offer.RequesterCompleted)
             {
                 // Assign Score
-                await AssignScore(offeredHelp, cancellationToken);
+                await AssignScore(offer, cancellationToken);
 
                 // Mark as completed
                 await MarkTaskAsCompleted(task, cancellationToken);
@@ -78,7 +78,7 @@ namespace HeroPrism.Api.Features.Tasks
                 await RemoveChatRooms(task, cancellationToken);
             }
 
-            await _offeredStore.UpdateAsync(offeredHelp, cancellationToken: cancellationToken);
+            await _offerStore.UpdateAsync(offer, cancellationToken: cancellationToken);
             
             return Unit.Value;
         }
@@ -95,7 +95,7 @@ namespace HeroPrism.Api.Features.Tasks
             await _taskStore.UpdateAsync(task, cancellationToken: cancellationToken);
         }
 
-        private async Task AssignScore(HelpOffered offeredHelp, CancellationToken cancellationToken)
+        private async Task AssignScore(Offer offeredHelp, CancellationToken cancellationToken)
         {
             var user = await _userStore.Query()
                 .FirstAsync(c => c.Id == offeredHelp.HelperId, cancellationToken);

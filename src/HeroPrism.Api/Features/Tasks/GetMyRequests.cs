@@ -49,6 +49,7 @@ namespace HeroPrism.Api.Features.Tasks
         {
             var tasks = await _taskStore.Query()
                 .Where(e => e.UserId == _session.UserId)
+                .Where(e=>e.Status != TaskStatuses.Deleted)
                 .ToListAsync(cancellationToken);
             
 

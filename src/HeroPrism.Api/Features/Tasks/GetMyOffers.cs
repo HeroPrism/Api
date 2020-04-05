@@ -46,12 +46,15 @@ namespace HeroPrism.Api.Features.Tasks
 
     public class GetMyOffersRequestHandler : IRequestHandler<GetMyOffersRequest, GetMyOffersResponse>
     {
-        private readonly ICosmosStore<HelpOffered> _offeredStore;
+        private readonly ICosmosStore<Offer> _offeredStore;
         private readonly ICosmosStore<HelpTask> _taskStore;
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
 
-        public GetMyOffersRequestHandler(ICosmosStore<HelpOffered> offeredStore, ICosmosStore<HelpTask> taskStore, ICosmosStore<User> userStore, HeroPrismSession session)
+        public GetMyOffersRequestHandler(ICosmosStore<Offer> offeredStore, 
+            ICosmosStore<HelpTask> taskStore, 
+            ICosmosStore<User> userStore, 
+            HeroPrismSession session)
         {
             _offeredStore = offeredStore;
             _taskStore = taskStore;
@@ -75,6 +78,7 @@ namespace HeroPrism.Api.Features.Tasks
 
             var tasks = await _taskStore.Query()
                 .Where(t => taskIds.Contains(t.Id))
+                .Where(t=>t.Status != TaskStatuses.Deleted)
                 .ToListAsync(cancellationToken);
 
             if (!tasks.Any())
@@ -88,12 +92,14 @@ namespace HeroPrism.Api.Features.Tasks
 
             var userLookup = users.ToDictionary(c => c.Id);
 
-            response.Tasks = MapToMyOfferTaskResponses(tasks, offers, userLookup);;
+            response.Tasks = MapToMyOfferTaskResponses(tasks, offers, userLookup);
             
             return response;
         }
 
-        private static IEnumerable<MyOfferTaskResponse> MapToMyOfferTaskResponses(List<HelpTask> tasks, IReadOnlyCollection<HelpOffered> offers, IReadOnlyDictionary<string, User> userLookup)
+        private static IEnumerable<MyOfferTaskResponse> MapToMyOfferTaskResponses(IEnumerable<HelpTask> tasks, 
+            IReadOnlyCollection<Offer> offers, 
+            IReadOnlyDictionary<string, User> userLookup)
         {
             foreach (var task in tasks)
             {
