@@ -10,20 +10,20 @@ using StreamChat;
 namespace HeroPrism.Api.Features.Chat
 {
     [ApiRequest("chat", "", ActionType.Read, true)]
-    public class GetChatRoomsRequest : IRequest<GetChatRoomsResponse>
+    public class GetAllChatRoomsRequest : IRequest<GetChatRoomsResponse>
     {
     }
 
-    public class GetChatRoomsRequestHandler : IRequestHandler<GetChatRoomsRequest, GetChatRoomsResponse>
+    public class GetAllChatRoomsRequestHandler : IRequestHandler<GetAllChatRoomsRequest, GetChatRoomsResponse>
     {
         private readonly IClient _chatClient;
 
-        public GetChatRoomsRequestHandler(IClient chatClient)
+        public GetAllChatRoomsRequestHandler(IClient chatClient)
         {
             _chatClient = chatClient;
         }
 
-        public async Task<GetChatRoomsResponse> Handle(GetChatRoomsRequest request, CancellationToken cancellationToken)
+        public async Task<GetChatRoomsResponse> Handle(GetAllChatRoomsRequest request, CancellationToken cancellationToken)
         {
             var channels = await _chatClient.QueryChannels(new QueryChannelsOptions());
 

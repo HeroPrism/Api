@@ -27,7 +27,6 @@ namespace HeroPrism.Data
     public enum TaskStatuses
     {
         New,
-        Open,
         Active,
         Completed
     }

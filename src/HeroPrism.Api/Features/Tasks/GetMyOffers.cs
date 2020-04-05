@@ -32,7 +32,6 @@ namespace HeroPrism.Api.Features.Tasks
         public DateTime CreateDateTime { get; set; }
         public TaskStatuses Status { get; set; }
         public TaskCategory Category { get; set; }
-        public string RequesterId { get; set; }
         public ChatUserResponse Requester { get; set; }
     }
 
@@ -42,6 +41,7 @@ namespace HeroPrism.Api.Features.Tasks
         public string UserId { get; set; }
         public int Score { get; set; }
         public int PictureId { get; set; }
+        public string FirstName { get; set; }
     }
 
     public class GetMyOffersRequestHandler : IRequestHandler<GetMyOffersRequest, GetMyOffersResponse>
@@ -73,9 +73,9 @@ namespace HeroPrism.Api.Features.Tasks
 
             var taskIds = offers.Select(o => o.TaskId).Distinct().ToHashSet();
 
-            var tasks = await _taskStore.Query().ToListAsync();
-                //.Where(t => taskIds.Contains(t.Id))
-                //.ToListAsync(cancellationToken);
+            var tasks = await _taskStore.Query()
+                .Where(t => taskIds.Contains(t.Id))
+                .ToListAsync(cancellationToken);
 
             if (!tasks.Any())
             {
@@ -93,7 +93,7 @@ namespace HeroPrism.Api.Features.Tasks
             return response;
         }
 
-        private static IEnumerable<MyOfferTaskResponse> MapToMyOfferTaskResponses(List<HelpTask> tasks, List<HelpOffered> offers, Dictionary<string, User> userLookup)
+        private static IEnumerable<MyOfferTaskResponse> MapToMyOfferTaskResponses(List<HelpTask> tasks, IReadOnlyCollection<HelpOffered> offers, IReadOnlyDictionary<string, User> userLookup)
         {
             foreach (var task in tasks)
             {
@@ -132,7 +132,8 @@ namespace HeroPrism.Api.Features.Tasks
                     UserId = user.Id,
                     ChatId = offer.Id,
                     Score = user.Score,
-                    PictureId = user.PictureId
+                    PictureId = user.PictureId,
+                    FirstName = user.FirstName
                 };
 
                 yield return taskResponse;
