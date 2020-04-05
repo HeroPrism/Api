@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
 using FluentValidation;
+using HeroPrism.Api.Features.Chat;
 using HeroPrism.Api.Infrastructure;
 using HeroPrism.Data;
 using MediatR;
@@ -18,7 +19,7 @@ namespace HeroPrism.Api.Features.Tasks
     {
         public string TaskId { get; set; }
     }
-    
+
     public class RemoveTaskRequestValidator : AbstractValidator<OfferHelpRequest>
     {
         public RemoveTaskRequestValidator()
@@ -30,16 +31,17 @@ namespace HeroPrism.Api.Features.Tasks
     public class RemoveTaskRequestHandler : IRequestHandler<RemoveTaskRequest>
     {
         private readonly ICosmosStore<HelpTask> _taskStore;
-        private readonly ICosmosStore<Offer> _offeredStore;
+        private readonly ICosmosStore<Offer> _offerStore;
         private readonly HeroPrismSession _session;
-        private readonly IClient _chatClient;
+        private readonly IMediator _mediator;
 
-        public RemoveTaskRequestHandler(ICosmosStore<HelpTask> taskStore, ICosmosStore<Offer> offeredStore, HeroPrismSession session, IClient chatClient)
+        public RemoveTaskRequestHandler(ICosmosStore<HelpTask> taskStore, ICosmosStore<Offer> offerStore,
+            HeroPrismSession session, IMediator mediator)
         {
             _taskStore = taskStore;
-            _offeredStore = offeredStore;
+            _offerStore = offerStore;
             _session = session;
-            _chatClient = chatClient;
+            _mediator = mediator;
         }
 
         public async Task<Unit> Handle(RemoveTaskRequest request, CancellationToken cancellationToken)
@@ -51,7 +53,8 @@ namespace HeroPrism.Api.Features.Tasks
                 throw new UnauthorizedAccessException();
             }
 
-            //await RemoveChatRooms(task.Id);
+            await RemoveChatRooms(task.Id, cancellationToken);
+
             task.Status = TaskStatuses.Deleted;
 
             await _taskStore.UpdateAsync(task, cancellationToken: cancellationToken);
@@ -59,16 +62,9 @@ namespace HeroPrism.Api.Features.Tasks
             return Unit.Value;
         }
 
-        private async Task RemoveChatRooms(string taskId)
+        private async Task RemoveChatRooms(string taskId, CancellationToken cancellationToken)
         {
-            var helpOffered = await _offeredStore.Query()
-                .Where(c => c.TaskId == taskId).ToListAsync();
-
-            foreach (var help in helpOffered)
-            {
-                await _chatClient.Channel(help.Id).Delete();
-                await _offeredStore.RemoveAsync(help);
-            }
+            await _mediator.Send(new RemoveChatroomsCommand() {TaskId = taskId}, cancellationToken);
         }
     }
 }

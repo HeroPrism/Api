@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
 using FluentValidation;
+using HeroPrism.Api.Features.Chat;
 using HeroPrism.Api.Infrastructure;
 using HeroPrism.Api.Infrastructure.Exceptions;
 using HeroPrism.Data;
@@ -25,16 +26,19 @@ namespace HeroPrism.Api.Features.Tasks
         private readonly ICosmosStore<Offer> _offerStore;
         private readonly ICosmosStore<User> _userStore;
         private readonly HeroPrismSession _session;
+        private readonly IMediator _mediator;
 
         public CompleteTaskRequestHandler(ICosmosStore<HelpTask> taskStore,
             ICosmosStore<Offer> offerStore,
             ICosmosStore<User> userStore,
-            HeroPrismSession session)
+            HeroPrismSession session,
+            IMediator mediator)
         {
             _taskStore = taskStore;
             _offerStore = offerStore;
             _userStore = userStore;
             _session = session;
+            _mediator = mediator;
         }
 
         public async Task<Unit> Handle(CompleteTaskRequest request, CancellationToken cancellationToken)
@@ -75,7 +79,7 @@ namespace HeroPrism.Api.Features.Tasks
                 await MarkTaskAsCompleted(task, cancellationToken);
                 
                 // Remove all chat rooms associated to task
-                await RemoveChatRooms(task, cancellationToken);
+                await RemoveChatRooms(task.Id, cancellationToken);
             }
 
             await _offerStore.UpdateAsync(offer, cancellationToken: cancellationToken);
@@ -83,10 +87,9 @@ namespace HeroPrism.Api.Features.Tasks
             return Unit.Value;
         }
 
-        private async Task RemoveChatRooms(HelpTask task, CancellationToken cancellationToken)
+        private async Task RemoveChatRooms(string taskId, CancellationToken cancellationToken)
         {
-            // TODO: Figure out how to delete chatrooms. 
-            await Task.CompletedTask;
+            await _mediator.Send(new RemoveChatroomsCommand() {TaskId = taskId}, cancellationToken);
         }
 
         private async Task MarkTaskAsCompleted(HelpTask task, CancellationToken cancellationToken)

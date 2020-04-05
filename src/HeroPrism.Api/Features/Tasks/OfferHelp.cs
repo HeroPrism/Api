@@ -19,7 +19,7 @@ namespace HeroPrism.Api.Features.Tasks
     {
         public string TaskId { get; set; }
     }
-    
+
     public class OfferHelpRequestValidator : AbstractValidator<OfferHelpRequest>
     {
         public OfferHelpRequestValidator()
@@ -27,7 +27,7 @@ namespace HeroPrism.Api.Features.Tasks
             RuleFor(c => c.TaskId).NotEmpty();
         }
     }
-    
+
     public class OfferHelpResponse
     {
         public string ChatId { get; set; }
@@ -54,6 +54,7 @@ namespace HeroPrism.Api.Features.Tasks
             // Check to make sure they aren't already helping
             var offer = await _offerStore.Query()
                 .Where(c => c.HelperId == _session.UserId)
+                .Where(c => !c.HelperCompleted)
                 .Where(c => c.TaskId == request.TaskId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -61,7 +62,7 @@ namespace HeroPrism.Api.Features.Tasks
             {
                 var task = await _taskStore.FindAsync(request.TaskId, cancellationToken: cancellationToken);
 
-                if (task == null)
+                if (task == null || task.Status == TaskStatuses.Completed || task.Status == TaskStatuses.Deleted)
                 {
                     throw new EntityNotFoundException();
                 }
@@ -85,7 +86,7 @@ namespace HeroPrism.Api.Features.Tasks
                 await _offerStore.AddAsync(offer, cancellationToken: cancellationToken);
 
                 task.Status = TaskStatuses.Active;
-                
+
                 await _taskStore.UpsertAsync(task, cancellationToken: cancellationToken);
             }
 
@@ -97,7 +98,7 @@ namespace HeroPrism.Api.Features.Tasks
         {
             var channel = _chatClient.Channel("messaging", id);
 
-            await channel.Create(requesterId,new[] {requesterId, helperId});
+            await channel.Create(requesterId, new[] {requesterId, helperId});
         }
     }
 }
