@@ -41,6 +41,55 @@ namespace HeroPrism.Api.Features.Tasks
             return builder.ToString();
         }
     }
+    
+    public class SearchTaskRequestValidator : AbstractValidator<SearchTasksRequest>
+    {
+        public SearchTaskRequestValidator()
+        {
+            RuleFor(c => c.Bounds).SetValidator(new BoundsRequestValidator()).NotNull();
+        }
+    }
+    
+    public class SearchResponse
+    {
+        public IEnumerable<TaskResponse> Tasks { get; set; }
+    }
+
+    public class TaskResponse
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ZipCode { get; set; }
+        public CoordinateDto Coordinate { get; set; }
+        public DateTime CreateDateTime { get; set; }
+        public TaskStatuses Status { get; set; }
+        public TaskCategory Category { get; set; }
+        public PublicUserResponse Requester { get; set; }
+    }
+
+    public class PublicUserResponse
+    {
+        public string FirstName { get; set; }
+
+        public int Score { get; set; }
+
+        public UserTypes UserType { get; set; }
+
+        public int PictureId { get; set; }
+    }
+
+    public class CoordinateDto
+    {
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+
+        public string ToSearchString()
+        {
+            return $"{Longitude} {Latitude}";
+        }
+    }
+    
 
     public class BoundsRequest
     {
@@ -48,6 +97,17 @@ namespace HeroPrism.Api.Features.Tasks
         public CoordinateDto NW { get; set; }
         public CoordinateDto SE { get; set; }
         public CoordinateDto NE { get; set; }
+    }
+    
+    public class BoundsRequestValidator : AbstractValidator<BoundsRequest>
+    {
+        public BoundsRequestValidator()
+        {
+            RuleFor(c => c.NE).NotNull();
+            RuleFor(c => c.NW).NotNull();
+            RuleFor(c => c.SE).NotNull();
+            RuleFor(c => c.SW).NotNull();
+        }
     }
 
     public class SearchTasksRequestHandler : IRequestHandler<SearchTasksRequest, SearchResponse>
@@ -151,73 +211,5 @@ namespace HeroPrism.Api.Features.Tasks
 
             return responseTask;
         }
-    }
-
-    public class SearchTaskRequestValidator : AbstractValidator<SearchTasksRequest>
-    {
-        public SearchTaskRequestValidator()
-        {
-            RuleFor(c => c.Bounds).SetValidator(new BoundsRequestValidator()).NotNull();
-        }
-    }
-
-    public class BoundsRequestValidator : AbstractValidator<BoundsRequest>
-    {
-        public BoundsRequestValidator()
-        {
-            RuleFor(c => c.NE).NotNull();
-            RuleFor(c => c.NW).NotNull();
-            RuleFor(c => c.SE).NotNull();
-            RuleFor(c => c.SW).NotNull();
-        }
-    }
-
-
-    public class SearchResponse
-    {
-        public IEnumerable<TaskResponse> Tasks { get; set; }
-    }
-
-    public class TaskResponse
-    {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string ZipCode { get; set; }
-        public CoordinateDto Coordinate { get; set; }
-        public DateTime CreateDateTime { get; set; }
-        public TaskStatuses Status { get; set; }
-        public TaskCategory Category { get; set; }
-        public PublicUserResponse Requester { get; set; }
-    }
-
-    public class PublicUserResponse
-    {
-        public string FirstName { get; set; }
-
-        public int Score { get; set; }
-
-        public UserTypes UserType { get; set; }
-
-        public int PictureId { get; set; }
-    }
-
-    public class CoordinateDto
-    {
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
-
-        public string ToSearchString()
-        {
-            return $"{Longitude} {Latitude}";
-        }
-    }
-
-    public class UserResponse
-    {
-        public string Id { get; set; }
-        public string FirstName { get; set; }
-        public int Score { get; set; }
-        public string PictureUrl { get; set; }
     }
 }

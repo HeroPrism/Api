@@ -14,6 +14,23 @@ namespace HeroPrism.Api.Features.Users
     public class GetUserRequest : IRequest<GetUserResponse>
     {
     }
+    
+    public class GetUserResponse
+    {
+        public int PictureId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public UserTypes UserType { get; set; }
+        public int Score { get; set; }
+
+        public ChatTokenResponse ChatToken { get; set; }
+    }
+
+    public class ChatTokenResponse
+    {
+        public string Token { get; set; }
+        public DateTime Expiration { get; set; }
+    }
 
     public class GetUserRequestHandler : IRequestHandler<GetUserRequest, GetUserResponse>
     {
@@ -59,20 +76,5 @@ namespace HeroPrism.Api.Features.Users
         }
     }
 
-    public class GetUserResponse
-    {
-        public int PictureId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public UserTypes UserType { get; set; }
-        public int Score { get; set; }
-
-        public ChatTokenResponse ChatToken { get; set; }
-    }
-
-    public class ChatTokenResponse
-    {
-        public string Token { get; set; }
-        public DateTime Expiration { get; set; }
-    }
+   
 }

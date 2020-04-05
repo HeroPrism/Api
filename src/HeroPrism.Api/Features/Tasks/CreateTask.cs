@@ -23,6 +23,21 @@ namespace HeroPrism.Api.Features.Tasks
         
         public TaskCategory? Category { get; set; }
     }
+    
+    public class CreateTaskRequestValidator : AbstractValidator<CreateTaskRequest>
+    {
+        public CreateTaskRequestValidator()
+        {
+            RuleFor(c => c.Title).NotEmpty().NotNull();
+            RuleFor(c => c.Description).NotEmpty().NotNull();
+            RuleFor(c => c.ZipCode).NotEmpty().NotNull();
+        }
+    }
+    
+    public class CreateTaskResponse
+    {
+        public string Id { get; set; }
+    }
 
     public class CreateTaskRequestHandler : IRequestHandler<CreateTaskRequest, CreateTaskResponse>
     {
@@ -67,20 +82,5 @@ namespace HeroPrism.Api.Features.Tasks
 
             return new Point(new Position(-111 - afterDecimalLong, 33 + afterDecimalLat));
         }
-    }
-
-    public class CreateTaskRequestValidator : AbstractValidator<CreateTaskRequest>
-    {
-        public CreateTaskRequestValidator()
-        {
-            RuleFor(c => c.Title).NotEmpty();
-            RuleFor(c => c.Description).NotEmpty();
-            RuleFor(c => c.ZipCode).NotEmpty();
-        }
-    }
-
-    public class CreateTaskResponse
-    {
-        public string Id { get; set; }
     }
 }

@@ -16,6 +16,23 @@ namespace HeroPrism.Api.Features.Tasks
     public class GetMyRequestsRequest : IRequest<GetMyRequestsResponse>
     {
     }
+    
+    public class GetMyRequestsResponse
+    {
+        public IEnumerable<MyRequestTaskResponse> Tasks { get; set; }
+    }
+    
+    public class MyRequestTaskResponse
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ZipCode { get; set; }
+        public CoordinateDto Coordinate { get; set; }
+        public DateTime CreateDateTime { get; set; }
+        public TaskStatuses Status { get; set; }
+        public TaskCategory Category { get; set; }
+    }
 
     public class GetMyRequestsRequestHandler : IRequestHandler<GetMyRequestsRequest, GetMyRequestsResponse>
     {
@@ -38,7 +55,7 @@ namespace HeroPrism.Api.Features.Tasks
             // TODO: AUTOMAPPER
             var response = new GetMyRequestsResponse()
             {
-                Tasks = tasks?.Select(c => new MyTaskResponse()
+                Tasks = tasks?.Select(c => new MyRequestTaskResponse()
                 {
                     Id = c.Id,
                     Coordinate = new CoordinateDto()
@@ -57,22 +74,5 @@ namespace HeroPrism.Api.Features.Tasks
 
             return response;
         }
-    }
-
-    public class GetMyRequestsResponse
-    {
-        public IEnumerable<MyTaskResponse> Tasks { get; set; }
-    }
-
-    public class MyTaskResponse
-    {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string ZipCode { get; set; }
-        public CoordinateDto Coordinate { get; set; }
-        public DateTime CreateDateTime { get; set; }
-        public TaskStatuses Status { get; set; }
-        public TaskCategory Category { get; set; }
     }
 }

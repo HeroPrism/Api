@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
+using FluentValidation;
 using HeroPrism.Api.Infrastructure;
 using HeroPrism.Api.Infrastructure.Exceptions;
 using HeroPrism.Data;
@@ -96,16 +97,20 @@ namespace HeroPrism.Api.Features.Tasks
 
         private async Task AssignScore(HelpOffered offeredHelp, CancellationToken cancellationToken)
         {
-            var users = await _userStore.Query()
-                .Where(c => c.Id == offeredHelp.RequesterId || c.Id == offeredHelp.HelperId)
-                .ToListAsync(cancellationToken);
+            var user = await _userStore.Query()
+                .FirstAsync(c => c.Id == offeredHelp.HelperId, cancellationToken);
 
-            foreach (var user in users)
-            {
-                user.Score += 5;
-            }
+            user.Score += 5;
 
-            await _userStore.UpsertRangeAsync(users, cancellationToken: cancellationToken);
+            await _userStore.UpdateAsync(user, cancellationToken: cancellationToken);
+        }
+    }
+
+    public class CompleteTaskRequestValidator : AbstractValidator<CompleteTaskRequest>
+    {
+        public CompleteTaskRequestValidator()
+        {
+            RuleFor(c => c.TaskId).NotEmpty().NotNull();
         }
     }
 }

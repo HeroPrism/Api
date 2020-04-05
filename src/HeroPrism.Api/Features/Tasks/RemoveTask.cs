@@ -18,6 +18,14 @@ namespace HeroPrism.Api.Features.Tasks
     {
         public string TaskId { get; set; }
     }
+    
+    public class RemoveTaskRequestValidator : AbstractValidator<OfferHelpRequest>
+    {
+        public RemoveTaskRequestValidator()
+        {
+            RuleFor(c => c.TaskId).NotEmpty().NotNull();
+        }
+    }
 
     public class RemoveTaskRequestHandler : IRequestHandler<RemoveTaskRequest>
     {
@@ -61,14 +69,6 @@ namespace HeroPrism.Api.Features.Tasks
                 await _chatClient.Channel(help.Id).Delete();
                 await _offeredStore.RemoveAsync(help);
             }
-        }
-    }
-
-    public class RemoveTaskRequestValidator : AbstractValidator<OfferHelpRequest>
-    {
-        public RemoveTaskRequestValidator()
-        {
-            RuleFor(c => c.TaskId).NotEmpty();
         }
     }
 }

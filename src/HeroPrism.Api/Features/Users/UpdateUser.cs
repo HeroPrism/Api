@@ -18,6 +18,15 @@ namespace HeroPrism.Api.Features.Users
         public int PictureId { get; set; } = 1;
     }
     
+    public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
+    {
+        public UpdateUserRequestValidator()
+        {
+            RuleFor(c => c.FirstName).NotEmpty().NotNull();
+            RuleFor(c => c.LastName).NotEmpty().NotNull();
+        }
+    }
+    
     public class UpdateUserRequestHandler : IRequestHandler<UpdateUserRequest, Unit>
     {
         private readonly ICosmosStore<User> _userStore;
@@ -44,12 +53,5 @@ namespace HeroPrism.Api.Features.Users
         }
     }
 
-    public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
-    {
-        public UpdateUserRequestValidator()
-        {
-            RuleFor(c => c.FirstName).NotEmpty();
-            RuleFor(c => c.LastName).NotEmpty();
-        }
-    }
+   
 }

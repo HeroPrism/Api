@@ -19,6 +19,15 @@ namespace HeroPrism.Api.Features.Users
         public UserTypes UserType { get; set; } = UserTypes.Individual;
         public int PictureId { get; set; } = 1;
     }
+    
+    public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
+    {
+        public RegisterUserRequestValidator()
+        {
+            RuleFor(c => c.FirstName).NotEmpty().NotNull();
+            RuleFor(c => c.LastName).NotEmpty().NotNull();
+        }
+    }
 
     public class RegisterUserRequestHandler : IRequestHandler<RegisterUserRequest>
     {
@@ -59,15 +68,6 @@ namespace HeroPrism.Api.Features.Users
             };
 
             await _chatClient.Users.Update(user);
-        }
-    }
-
-    public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
-    {
-        public RegisterUserRequestValidator()
-        {
-            RuleFor(c => c.FirstName).NotEmpty();
-            RuleFor(c => c.LastName).NotEmpty();
         }
     }
 }

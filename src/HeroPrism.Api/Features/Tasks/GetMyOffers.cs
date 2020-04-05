@@ -15,6 +15,11 @@ namespace HeroPrism.Api.Features.Tasks
     public class GetMyOffersRequest : IRequest<GetMyOffersResponse>
     {
     }
+    
+    public class GetMyOffersResponse
+    {
+        public IEnumerable<MyRequestTaskResponse> Tasks { get; set; }
+    }
 
     public class GetMyOffersRequestHandler : IRequestHandler<GetMyOffersRequest, GetMyOffersResponse>
     {
@@ -52,7 +57,7 @@ namespace HeroPrism.Api.Features.Tasks
                 return response;
             }
 
-            response.Tasks = tasks?.Select(c => new MyTaskResponse()
+            response.Tasks = tasks?.Select(c => new MyRequestTaskResponse()
             {
                 Id = c.Id,
                 Coordinate = new CoordinateDto()
@@ -72,8 +77,5 @@ namespace HeroPrism.Api.Features.Tasks
         }
     }
 
-    public class GetMyOffersResponse
-    {
-        public IEnumerable<MyTaskResponse> Tasks { get; set; }
-    }
+   
 }

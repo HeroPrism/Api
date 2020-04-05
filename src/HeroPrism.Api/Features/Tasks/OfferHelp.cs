@@ -19,6 +19,19 @@ namespace HeroPrism.Api.Features.Tasks
     {
         public string TaskId { get; set; }
     }
+    
+    public class OfferHelpRequestValidator : AbstractValidator<OfferHelpRequest>
+    {
+        public OfferHelpRequestValidator()
+        {
+            RuleFor(c => c.TaskId).NotEmpty();
+        }
+    }
+    
+    public class OfferHelpResponse
+    {
+        public string ChatId { get; set; }
+    }
 
     public class OfferHelpRequestHandler : IRequestHandler<OfferHelpRequest, OfferHelpResponse>
     {
@@ -87,18 +100,5 @@ namespace HeroPrism.Api.Features.Tasks
 
             await channel.Create(requesterId,new[] {requesterId, helperId});
         }
-    }
-
-    public class OfferHelpRequestValidator : AbstractValidator<OfferHelpRequest>
-    {
-        public OfferHelpRequestValidator()
-        {
-            RuleFor(c => c.TaskId).NotEmpty();
-        }
-    }
-
-    public class OfferHelpResponse
-    {
-        public string ChatId { get; set; }
     }
 }
