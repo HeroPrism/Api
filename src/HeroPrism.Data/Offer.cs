@@ -11,11 +11,6 @@ namespace HeroPrism.Data
         
         public string TaskId { get; set; }
         
-        public string RequesterId { get; set; }
-        public bool RequesterCompleted { get; set; }
-        
         public string HelperId { get; set; }
-        public bool HelperCompleted { get; set; }
-        
     }
 }

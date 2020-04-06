@@ -14,10 +14,10 @@ using Nerdino.Controllerless;
 
 namespace HeroPrism.Api.Features.Tasks
 {
-    [ApiRequest("tasks", "completed", ActionType.Create, false)]
+    [ApiRequest("tasks", "complete", ActionType.Create, false)]
     public class CompleteTaskRequest : IRequest
     {
-        public string TaskId { get; set; }
+        public string ChatId { get; set; }
     }
 
     public class CompleteTaskRequestHandler : IRequestHandler<CompleteTaskRequest>
@@ -43,46 +43,35 @@ namespace HeroPrism.Api.Features.Tasks
 
         public async Task<Unit> Handle(CompleteTaskRequest request, CancellationToken cancellationToken)
         {
-            var task = await _taskStore.FindAsync(request.TaskId, cancellationToken: cancellationToken);
-
-            if (task == null || !task.IsOpen())
-            {
-                throw new EntityNotFoundException();
-            }
-
             var offer = await _offerStore.Query()
-                .Where(c => c.HelperId == _session.UserId || c.RequesterId == _session.UserId)
-                .FirstOrDefaultAsync(c => c.TaskId == request.TaskId, cancellationToken);
+                .FirstOrDefaultAsync(c => c.Id == request.ChatId, cancellationToken);
 
             if (offer == null)
             {
                 // Trying to complete something they don't have access to. 
+                throw new EntityNotFoundException();
+            }
+
+            var task = await _taskStore.FindAsync(offer.TaskId, cancellationToken: cancellationToken);
+
+            if (task == null)
+            {
+                throw new EntityNotFoundException();
+            }
+
+            if (task.UserId != _session.UserId)
+            {
                 throw new UnauthorizedAccessException();
             }
 
-            if (offer.HelperId == _session.UserId)
-            {
-                offer.HelperCompleted = true;
-            }
+            // Assign Score
+            await AssignScore(offer, cancellationToken);
 
-            if (offer.RequesterId == _session.UserId)
-            {
-                offer.RequesterCompleted = true;
-            }
+            // Mark as completed
+            await MarkTaskAsCompleted(task, offer.HelperId, cancellationToken);
 
-            if (offer.HelperCompleted && offer.RequesterCompleted)
-            {
-                // Assign Score
-                await AssignScore(offer, cancellationToken);
-
-                // Mark as completed
-                await MarkTaskAsCompleted(task, cancellationToken);
-
-                // Remove all chat rooms associated to task
-                await RemoveChatRooms(task.Id, cancellationToken);
-            }
-
-            await _offerStore.UpdateAsync(offer, cancellationToken: cancellationToken);
+            // Remove all chat rooms associated to task
+            await RemoveChatRooms(task.Id, cancellationToken);
 
             return Unit.Value;
         }
@@ -92,18 +81,19 @@ namespace HeroPrism.Api.Features.Tasks
             await _mediator.Send(new RemoveChatroomsCommand() {TaskId = taskId}, cancellationToken);
         }
 
-        private async Task MarkTaskAsCompleted(HelpTask task, CancellationToken cancellationToken)
+        private async Task MarkTaskAsCompleted(HelpTask task, string helperId, CancellationToken cancellationToken)
         {
             task.Status = TaskStatuses.Completed;
+            task.HelperId = helperId;
             await _taskStore.UpdateAsync(task, cancellationToken: cancellationToken);
         }
 
-        private async Task AssignScore(Offer offeredHelp, CancellationToken cancellationToken)
+        private async Task AssignScore(Offer offer, CancellationToken cancellationToken)
         {
             var user = await _userStore.Query()
-                .FirstAsync(c => c.Id == offeredHelp.HelperId, cancellationToken);
+                .FirstAsync(c => c.Id == offer.HelperId, cancellationToken);
 
-            user.Score += 5;
+            user.Score += 1;
 
             await _userStore.UpdateAsync(user, cancellationToken: cancellationToken);
         }
@@ -113,7 +103,7 @@ namespace HeroPrism.Api.Features.Tasks
     {
         public CompleteTaskRequestValidator()
         {
-            RuleFor(c => c.TaskId).NotEmpty().NotNull();
+            RuleFor(c => c.ChatId).NotEmpty().NotNull();
         }
     }
 }

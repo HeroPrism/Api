@@ -28,6 +28,8 @@ namespace HeroPrism.Api.Features.Tasks
         public TaskStatuses Status { get; set; }
         public TaskCategory Category { get; set; }
         public IEnumerable<ChatUserResponse> Offers { get; set; }
+
+        public string HelperId { get; set; }
     }
 
     public class GetTaskRequestHandler : IRequestHandler<GetTaskRequest, GetTaskRequestResponse>
@@ -68,16 +70,17 @@ namespace HeroPrism.Api.Features.Tasks
                 Category = task.Category,
                 Status = task.Status,
                 CreateDateTime = task.CreatedDateTime,
-                Offers = await GetOffers(request.TaskId, cancellationToken)
+                Offers = await GetOffers(task, cancellationToken),
+                HelperId = task.HelperId
             };
 
             return response;
         }
 
-        private async Task<IEnumerable<ChatUserResponse>> GetOffers(string taskId, CancellationToken cancellationToken)
+        private async Task<IEnumerable<ChatUserResponse>> GetOffers(HelpTask task, CancellationToken cancellationToken)
         {
             var offers = await _offerStore.Query()
-                .Where(o => o.TaskId == taskId)
+                .Where(o => o.TaskId == task.Id)
                 .ToListAsync(cancellationToken);
 
             var userIds = offers.Select(c => c.HelperId).Distinct();
@@ -89,7 +92,6 @@ namespace HeroPrism.Api.Features.Tasks
             var offerResponses = new List<ChatUserResponse>();
             foreach (var offer in offers)
             {
-
                 var user = userLookup[offer.HelperId];
 
                 if (user == null)
@@ -101,7 +103,7 @@ namespace HeroPrism.Api.Features.Tasks
                 {
                     UserId = offer.HelperId,
                     Score = user.Score,
-                    ChatId = offer.Id,
+                    ChatId = task.Status == TaskStatuses.Completed ? null : offer.Id,
                     PictureId = user.PictureId,
                     FirstName = user.FirstName
                 };

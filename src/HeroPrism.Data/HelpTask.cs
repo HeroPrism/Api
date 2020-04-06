@@ -22,6 +22,8 @@ namespace HeroPrism.Data
         public TaskCategory Category { get; set; }
         
         public string CosmosEntityName { get; set; }
+        
+        public string HelperId { get; set; }
 
         public bool IsOpen()
         {

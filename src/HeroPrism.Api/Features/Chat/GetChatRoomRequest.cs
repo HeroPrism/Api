@@ -71,21 +71,22 @@ namespace HeroPrism.Api.Features.Chat
                 throw new EntityNotFoundException();
             }
 
-            if (offer.HelperId != _session.UserId && offer.RequesterId != _session.UserId)
+            var task = await _taskStore.FindAsync(offer.TaskId, cancellationToken: cancellationToken);
+            
+            if (offer.HelperId != _session.UserId && task.UserId != _session.UserId)
             {
                 throw new UnauthorizedAccessException();
             }
-
-            var task = await _taskStore.FindAsync(offer.TaskId, cancellationToken: cancellationToken);
 
             if (task == null || !task.IsOpen())
             {
                 throw new EntityNotFoundException();
             }
 
-            var isCurrentUserRequester = offer.RequesterId == _session.UserId;
+            var isCurrentUserRequester = task.UserId == _session.UserId;
 
-            var userId = isCurrentUserRequester ? offer.HelperId : offer.RequesterId;
+            // If it's the requester we should find the Helper and vice versa
+            var userId = isCurrentUserRequester ? offer.HelperId : offer.TaskId;
 
             var user = await _userStore.FindAsync(userId, cancellationToken: cancellationToken);
 

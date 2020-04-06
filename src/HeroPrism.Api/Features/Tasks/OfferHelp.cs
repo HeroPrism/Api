@@ -54,7 +54,6 @@ namespace HeroPrism.Api.Features.Tasks
             // Check to make sure they aren't already helping
             var offer = await _offerStore.Query()
                 .Where(c => c.HelperId == _session.UserId)
-                .Where(c => !c.HelperCompleted)
                 .Where(c => c.TaskId == request.TaskId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -76,12 +75,11 @@ namespace HeroPrism.Api.Features.Tasks
                 offer = new Offer()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    RequesterId = task.UserId,
                     HelperId = _session.UserId,
                     TaskId = task.Id,
                 };
 
-                await CreateChatRoom(offer.Id, offer.RequesterId, offer.HelperId, cancellationToken);
+                await CreateChatRoom(offer.Id, task.UserId, offer.HelperId, cancellationToken);
 
                 await _offerStore.AddAsync(offer, cancellationToken: cancellationToken);
 
